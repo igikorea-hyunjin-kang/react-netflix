@@ -1,13 +1,15 @@
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
 import { Link, useRouteMatch } from 'react-router-dom';
+import { useState } from 'react';
 
 const Nav = styled.nav`
   display: flex;
   justify-content: space-between;
   align-items: center;
   position: fixed;
-  width: 100%;
+  width: 94vw;
+  /* width: 97vw; */
   top: 0;
   background-color: black;
   font-size: 14px;
@@ -37,13 +39,13 @@ const Items = styled.ul`
 `;
 
 const Item = styled.li`
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
   margin-right: 20px;
   color: ${(props) => props.theme.white.darker};
   transition: color 0.3s ease-in-out;
   position: relative;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
   &:hover {
     color: ${(props) => props.theme.white.lighter};
   }
@@ -51,12 +53,15 @@ const Item = styled.li`
 
 const Search = styled.span`
   color: white;
+  display: flex;
+  align-items: center;
+  position: relative;
   svg {
     height: 25px;
   }
 `;
 
-const Circle = styled.span`
+const Circle = styled(motion.span)`
   /**
  * 중앙정렬 팁
  * position: absolute;
@@ -75,6 +80,12 @@ const Circle = styled.span`
   background-color: ${(props) => props.theme.red};
 `;
 
+const Input = styled(motion.input)`
+  transform-origin: right center;
+  position: absolute;
+  left: -150px;
+`;
+
 const logoVariants = {
   nomarl: {
     fillOpacity: 1,
@@ -88,10 +99,11 @@ const logoVariants = {
 };
 
 function Header() {
+  const [searchOpen, setSearchOpen] = useState(false);
   const homeMatch = useRouteMatch('/');
   const tvMatch = useRouteMatch('/tv');
-  console.log('homeMatch', homeMatch);
-  console.log('tvMatch', tvMatch);
+  const toggleSearch = () => setSearchOpen((prev) => !prev);
+
   return (
     <Nav>
       <Col>
@@ -108,16 +120,23 @@ function Header() {
         </Logo>
         <Items>
           <Item>
-            <Link to="/">Home {homeMatch?.isExact && <Circle />}</Link>
+            <Link to="/">
+              Home {homeMatch?.isExact && <Circle layoutId="circle" />}
+            </Link>
           </Item>
           <Item>
-            <Link to="/tv">TV Shows {tvMatch?.isExact && <Circle />}</Link>
+            <Link to="/tv">
+              TV Shows {tvMatch?.isExact && <Circle layoutId="circle" />}
+            </Link>
           </Item>
         </Items>
       </Col>
       <Col>
         <Search>
-          <svg
+          <motion.svg
+            onClick={toggleSearch}
+            animate={{ x: searchOpen ? -180 : 0 }}
+            transition={{ type: 'linear' }}
             fill="currentColor"
             viewBox="0 0 20 20"
             xmlns="http://www.w3.org/2000/svg"
@@ -127,7 +146,12 @@ function Header() {
               d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
               clipRule="evenodd"
             ></path>
-          </svg>
+          </motion.svg>
+          <Input
+            transition={{ type: 'linear' }}
+            animate={{ scaleX: searchOpen ? 1 : 0 }}
+            placeholder="Search for movie or tv show..."
+          />
         </Search>
       </Col>
     </Nav>

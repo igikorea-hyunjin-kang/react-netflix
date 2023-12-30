@@ -36,6 +36,10 @@ body {
 ol, ul {
 	list-style: none;
 }
+a {
+	text-decoration: none;
+	color: inherit;
+}
 blockquote, q {
 	quotes: none;
 }
